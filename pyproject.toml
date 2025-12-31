@@ -1,0 +1,13 @@
+[project]
+name = "trabalho-analise-de-algoritmos"
+version = "1.0.0"
+dependencies = [
+  "numpy>=2.0.0"
+]
+
+[tool.pyright]
+typeCheckingMode = "standard"
+
+include = ["src"]
+
+exclude = ["**/__pycache__", "**/venv", ".git"]
