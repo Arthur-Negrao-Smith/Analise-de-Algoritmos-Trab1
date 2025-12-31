@@ -9,6 +9,9 @@ class Order(Enum):
     MANY_REPETITIONS = 3
 
 
+DATA_PATH: str = "src/data"
+
+
 class Data:
     """
     Class to generate artificial data
@@ -46,7 +49,7 @@ class Data:
         self._comparisons += increment
 
     def update_swaps(self, increment: int = 1) -> None:
-        self._comparisons += increment
+        self._swaps += increment
 
     def get_swaps_comparisons(self) -> tuple[int, int]:
         return (self._swaps, self._comparisons)
