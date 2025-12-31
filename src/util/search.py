@@ -1,23 +1,29 @@
-import numpy as np
+from util.data import Data
 
 
-def binary_search(array: np.ndarray, target: int, left: int, right: int) -> int:
+def binary_search(data: Data, target: int, left: int, right: int) -> int:
+    data.update_comparisons()
     if left == right:
-        if array[left] > target:
+        data.update_comparisons()
+
+        if data.data[left] > target:
             return left
         else:
             return left + 1
 
+    data.update_comparisons()
     # if the array don't have the target value
     if left > right:
         return left
 
     mid: int = (left + right) // 2
 
-    if target > array[mid]:
-        return binary_search(array, target, mid + 1, right)
+    data.update_comparisons()
+    if target > data.data[mid]:
+        return binary_search(data, target, mid + 1, right)
 
-    if target < array[mid]:
-        return binary_search(array, target, left, mid - 1)
+    data.update_comparisons()
+    if target < data.data[mid]:
+        return binary_search(data, target, left, mid - 1)
 
     return mid
