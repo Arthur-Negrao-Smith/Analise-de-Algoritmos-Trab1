@@ -22,7 +22,35 @@ class BinaryTree:
         if self._root is None:
             return "[]"
 
-        return "[ " + self._recursive_visit(self.root) + "]"
+        # prealloc to avoid list reallocs
+        result: list[int | None] = [None] * self._size
+
+        stack: list[BinaryNode] = []
+        current: BinaryNode | None = self.root
+
+        result_index: int = 0
+        while stack or current:
+            if current:
+                stack.append(current)
+                current = current.left
+            else:
+                current = stack.pop()
+
+                if current.frequency == 1:
+                    result[result_index] = current.data
+                    result_index += 1
+
+                else:
+                    # optmization with slice
+                    result[result_index : result_index + current.frequency] = [
+                        current.data
+                    ] * current.frequency
+
+                    result_index += current.frequency
+
+                current = current.right
+
+        return str(result)
 
     @benchmark("Binary Tree")
     def insertData(self, dataToOrder: Data) -> None:
@@ -37,40 +65,24 @@ class BinaryTree:
             self._root = node
             return
 
-        self._root = self._recursiveInsertNode(self._root, node)
+        current: BinaryNode = self.root
 
-    def _recursiveInsertNode(
-        self, root: BinaryNode | None, node: BinaryNode
-    ) -> BinaryNode | None:
-        if root is None:
-            return node
+        while True:
+            if node.data == current.data:
+                current.frequency += 1
+                return
 
-        if node.data == root.data:
-            root.frequency += 1
-            return root
+            if node.data < current.data:
+                if current.left is None:
+                    current.left = node
+                    return
+                current = current.left
 
-        if node.data < root.data:
-            root.left = self._recursiveInsertNode(root.left, node)
-            return root
-
-        if node.data > root.data:
-            root.right = self._recursiveInsertNode(root.right, node)
-            return root
-
-    def _recursive_visit(self, root: BinaryNode | None) -> str:
-        if root is None:
-            return ""
-
-        data: str = self._recursive_visit(root.left)
-        if root.frequency == 1:
-            data += str(root.data) + " "
-        else:
-            for _ in range(root.frequency):
-                data += str(root.data) + " "
-
-        data += self._recursive_visit(root.right)
-
-        return data
+            if node.data > current.data:
+                if current.right is None:
+                    current.right = node
+                    return
+                current = current.right
 
     @property
     def root(self) -> BinaryNode:
