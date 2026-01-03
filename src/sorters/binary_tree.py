@@ -30,14 +30,18 @@ class BinaryTree:
     def insertData(self, dataToOrder: Data) -> Data:
         for data in dataToOrder.data:
             tmp_node: BinaryNode = BinaryNode(data)
-            self.insertNode(tmp_node)
+            self.insertNode(tmp_node, dataToOrder)
 
         dataToOrder.data = self.getSortedData()
         return dataToOrder
 
-    def insertNode(self, node: BinaryNode) -> None:
+    def insertNode(self, node: BinaryNode, dataToBenchmark: Data | None) -> None:
+        if dataToBenchmark is None:
+            dataToBenchmark = Data()
+
         self._size += 1
 
+        dataToBenchmark.update_comparisons()
         if self._root is None:
             self._root = node
             return
@@ -45,17 +49,22 @@ class BinaryTree:
         current: BinaryNode = self.root
 
         while True:
+            dataToBenchmark.update_comparisons(2)
             if node.data == current.data:
                 current.frequency += 1
                 return
 
+            dataToBenchmark.update_comparisons()
             if node.data < current.data:
+                dataToBenchmark.update_comparisons()
                 if current.left is None:
                     current.left = node
                     return
                 current = current.left
 
+            dataToBenchmark.update_comparisons()
             if node.data > current.data:
+                dataToBenchmark.update_comparisons()
                 if current.right is None:
                     current.right = node
                     return
