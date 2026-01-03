@@ -1,8 +1,11 @@
 from time import time
 from typing import Self
 import pandas as pd
+from pathlib import Path
 
 from util.data import Data
+
+BENCHDATA_INDEXES: list[str] = ["Order", "Data Size", "Swaps", "Comparisons", "Time"]
 
 
 def benchmark(
@@ -17,12 +20,22 @@ def benchmark(
             finish: float = time() - start
 
             if print_result:
-                print(f"Total time of {algorithm_name}: {finish}s")
+                print(
+                    f"Total time of {algorithm_name} with {data.get_order().name} data: {finish}s"
+                )
 
             # to save the results
             if save_csv is not None:
                 swaps, comparisons = data.get_swaps_comparisons()
+
+                file_not_exists: bool = not Path(save_csv).exists()
+
                 with open(save_csv, "a") as file:
+
+                    # add a header
+                    if file_not_exists:
+                        file.write(",".join(BENCHDATA_INDEXES) + "\n")
+
                     file.write(
                         f"{data.get_order().name},{len(data.data)},{swaps},{comparisons},{finish}\n"
                     )
@@ -36,7 +49,9 @@ def benchmark(
 
 class BenchData:
     def __init__(self) -> None:
-        self.df: pd.DataFrame = pd.DataFrame()
+        self.df: pd.DataFrame = pd.DataFrame(
+            {"Order": [], "Data Size": [], "Swaps": [], "Comparisons": [], "Time": []}
+        )
 
     def __getattribute__(self, name: str) -> pd.Series | pd.DataFrame:
         return self.df[name]
@@ -45,6 +60,6 @@ class BenchData:
         self.df.read_csv(
             pathToData,
             header=None,
-            names=["Order", "Data Size", "Swaps", "Comparisons", "Time"],
+            names=BENCHDATA_INDEXES,
         )
         return self
