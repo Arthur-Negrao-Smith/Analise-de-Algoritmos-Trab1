@@ -20,9 +20,12 @@ def benchmark(
             finish: float = time() - start
 
             if print_result:
-                print(
-                    f"Total time of {algorithm_name} with {data.get_order().name} data: {finish}s"
-                )
+                print("-" * 50)
+                print(f"Algorithm: {algorithm_name}")
+                print(f"Data size: {len(data.data)}")
+                print(f"Data ordering: {data.get_order().name}")
+                print(f"Time: {finish}s")
+                print("-" * 50)
 
             # to save the results
             if save_csv is not None:
@@ -59,7 +62,5 @@ class BenchData:
     def read_csv(self, pathToData: str) -> Self:
         self.df.read_csv(
             pathToData,
-            header=None,
-            names=BENCHDATA_INDEXES,
         )
         return self
