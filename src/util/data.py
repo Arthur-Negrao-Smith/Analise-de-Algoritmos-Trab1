@@ -9,7 +9,7 @@ class Order(Enum):
     MANY_REPETITIONS = 3
 
 
-DATA_PATH: str = "src/data"
+DATA_PATH: str = "data"
 
 
 class Data:
@@ -37,11 +37,11 @@ class Data:
             case Order.RANDOM:
                 self._data = np.random.randint(size - 1, size=(size))
             case Order.MANY_REPETITIONS:
-                if size <= 100:
+                if size <= 0:
                     raise RuntimeError(
-                        f"The size is very small. Use a size greater than 100: {size}"
+                        f"The size must have a positive number"
                     )
-                self._data = np.random.randint(low=0, high=size // 100, size=size - 1)
+                self._data = np.random.randint(low=0, high=size % 100 + 1, size=size)
             case _:
                 raise RuntimeError("Undefined order")
 
